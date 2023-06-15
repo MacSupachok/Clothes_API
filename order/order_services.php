@@ -61,7 +61,7 @@ if ($token == $api_token) {
 
         $user_id = $_POST["user_id"];
 
-        $sql = "SELECT * FROM order_tb WHERE user_id = '$user_id' AND status = 'new' ";
+        $sql = "SELECT * FROM order_tb WHERE user_id = '$user_id' AND status = 'new' ORDER BY date_time DESC";
 
         //echo $sql;
 
@@ -78,6 +78,45 @@ if ($token == $api_token) {
                     "orderData" => $ordersRecord
                 )
             );
+        } else {
+            echo json_encode(array("success" => false));
+        }
+    }
+
+    if ($function == "read_order_history") {
+
+        $user_id = $_POST["user_id"];
+
+        $sql = "SELECT * FROM order_tb WHERE user_id = '$user_id' AND status = 'received' ORDER BY date_time DESC";
+
+        //echo $sql;
+
+        $result = mysqli_query($conn, $sql);
+
+        if ($result->num_rows > 0) {
+            $ordersRecord = array();
+            while ($rowFound = $result->fetch_assoc()) {
+                $ordersRecord[] = $rowFound;
+            }
+            echo json_encode(
+                array(
+                    "success" => true,
+                    "orderData" => $ordersRecord
+                )
+            );
+        } else {
+            echo json_encode(array("success" => false));
+        }
+    }
+
+    if ($function == "update_order") {
+
+        $order_id = $_POST['order_id'];
+
+        $sql = "UPDATE order_tb SET status = 'received' WHERE order_id = $order_id ";
+
+        if ($result = mysqli_query($conn, $sql)) {
+            echo json_encode(array("success" => true));
         } else {
             echo json_encode(array("success" => false));
         }

@@ -36,6 +36,32 @@ if ($token == $api_token) {
         }
     }
 
+    if ($function == "read_order") {
+
+        // $user_id = $_POST["user_id"];
+
+        $sql = "SELECT * FROM order_tb WHERE status = 'new' ORDER BY date_time DESC";
+
+        //echo $sql;
+
+        $result = mysqli_query($conn, $sql);
+
+        if ($result->num_rows > 0) {
+            $ordersRecord = array();
+            while ($rowFound = $result->fetch_assoc()) {
+                $ordersRecord[] = $rowFound;
+            }
+            echo json_encode(
+                array(
+                    "success" => true,
+                    "allOrderData" => $ordersRecord
+                )
+            );
+        } else {
+            echo json_encode(array("success" => false));
+        }
+    }
+
 } else {
     echo json_encode(array("Verify token" => false));
 }
